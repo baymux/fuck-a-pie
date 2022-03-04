@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sjft.dao.AreaCodeDao">
+
+    <select id="selectAreaList" resultType="com.sjft.entity.AreaCodeEntity">
+        SELECT * FROM area_code WHERE adcode IN (
+        SELECT area_code FROM area_json
+        <where>
+            area_json IS NULL
+            <if test="level != null and level != ''">
+                AND level = #{level,jdbcType=VARCHAR}
+            </if>
+            <if test="parent != null and parent != ''">
+                AND parent = #{parent,jdbcType=VARCHAR}
+            </if>)
+        </where>
+    </select>
+</mapper>
