@@ -2,19 +2,26 @@ package com.sjft.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.sjft.common.ResponseResult;
-import com.sjft.entity.*;
+import com.sjft.entity.AreaCodeEntity;
+import com.sjft.entity.AreaJsonEntity;
+import com.sjft.entity.ChartsEntity;
 import com.sjft.forest.AmapClient;
 import com.sjft.service.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +53,7 @@ public class ReptileController {
         this.amapClient = amapClient;
     }
 
-    @GetMapping("/charts")
+    /*@GetMapping("/charts")
     public ResponseResult charts() {
         Thread t = new Thread(() -> {
             try {
@@ -124,6 +131,51 @@ public class ReptileController {
 
         t.start();
 
+
+        return ResponseResult.success();
+    }
+*/
+
+    @GetMapping("/charts1")
+    public ResponseResult charts1() {
+
+        Thread t = new Thread(() -> {
+            try {
+                for (int i = 1; i < 24; i++) {
+                    Map<String, Object> charts = amapClient.getCharts(1, i, (ex, request, response) -> {
+                        // 获取请求响应状态码
+                        int status = response.getStatusCode();
+                        System.err.println(request + "====>" + status);
+                    });
+                    int pageSize = 20;
+                    Integer totalRecord = (Integer) charts.get("total");
+                    int totalPageNum = (totalRecord - 1) / pageSize + 1;
+                    for (int j = 1; j <= totalPageNum; j++) {
+                        Map<String, Object> chartsPage = amapClient.getCharts(j, i, (ex, request, response) -> {
+                            // 获取请求响应状态码
+                            int status = response.getStatusCode();
+                            System.err.println(request + "====>" + status);
+                        });
+
+                        List<Map<String, Object>> chartsEntityList = (List<Map<String, Object>>) chartsPage.get("chartList");
+
+                        List<ChartsEntity> collect = chartsEntityList.stream().map(item -> {
+                            CopyOptions copyOptions = new CopyOptions();
+                            copyOptions.ignoreCase();
+                            DateTime createTime = DateUtil.parseUTC((String) item.get("createTime"));
+                            ChartsEntity chartsEntity = BeanUtil.mapToBean(item, ChartsEntity.class, true, copyOptions);
+                            chartsEntity.setCreateTime(DateUtil.format(createTime, DatePattern.NORM_DATETIME_FORMAT));
+                            return chartsEntity;
+                        }).collect(Collectors.toList());
+                        chartsService.saveBatch(collect);
+                    }
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        t.start();
 
         return ResponseResult.success();
     }

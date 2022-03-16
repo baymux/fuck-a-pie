@@ -33,6 +33,10 @@ public interface AmapClient {
     Map<String, Object> getCharts(int pageNumber, OnError onError);
 
 
+    @Get("http://api.ppchart.com/chart/api/chart-list?current=${0}&type=${1}")
+    Map<String, Object> getCharts(int pageNumber, int type,OnError onError);
+
+
     /**
      * 获取图片
      *
