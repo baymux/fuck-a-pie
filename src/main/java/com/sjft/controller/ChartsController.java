@@ -47,6 +47,14 @@ public class ChartsController {
     }
 
 
+    @PostMapping("/tags")
+    public ResponseResult tags(@RequestBody(required = false) Map<String, Object> params) {
+
+        List<Map<String, Object>> tags = chartsService.getTagsList(params);
+        return ResponseResult.success(tags);
+    }
+
+
     /**
      * 获取图表详情
      *

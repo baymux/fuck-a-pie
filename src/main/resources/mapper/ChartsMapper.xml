@@ -18,4 +18,10 @@
             </if>
         </where>
     </select>
+
+    <!--查询标签信息-->
+    <select id="getTagsList" resultType="java.lang.String">
+        SELECT distinct custom_tags
+        FROM chart_info
+    </select>
 </mapper>

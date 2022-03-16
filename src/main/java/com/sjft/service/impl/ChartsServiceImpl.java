@@ -20,4 +20,10 @@ public class ChartsServiceImpl extends ServiceImpl<ChartsDao, ChartsEntity> impl
     public List<Map<String, Object>> getList(Map<String, Object> params) {
         return this.baseMapper.selectList(params);
     }
+
+    @Override
+    public List<Map<String, Object>> getTagsList(Map<String, Object> params) {
+        List<String> tags = this.baseMapper.getTagsList(params);
+        return null;
+    }
 }

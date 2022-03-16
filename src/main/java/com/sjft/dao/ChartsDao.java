@@ -26,4 +26,11 @@ public interface ChartsDao extends BaseMapper<ChartsEntity> {
      * @date 2022/3/4 14:59
      */
     List<Map<String, Object>> selectList(Map<String, Object> params);
+
+    /**
+     * 查询标签列表
+     * @param params
+     * @return
+     */
+    List<String> getTagsList(Map<String, Object> params);
 }

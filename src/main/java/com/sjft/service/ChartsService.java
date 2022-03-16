@@ -23,5 +23,13 @@ public interface ChartsService extends IService<ChartsEntity> {
      * @date 2022/3/4 14:58
      */
     List<Map<String, Object>> getList(Map<String, Object> params);
+
+
+    /**
+     * 获取表标签
+     * @param params
+     * @return
+     */
+    List<Map<String, Object>> getTagsList(Map<String, Object> params);
 }
 
